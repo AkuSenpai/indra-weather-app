@@ -16,6 +16,7 @@ const MainWeatherDisplay = ({
 }) => {
   return (
     <View style={styles.container}>
+      <Text style={styles.heading}>Current Weather</Text>
       <Text style={styles.cityText}>
         {city}, {state}
       </Text>
@@ -60,6 +61,11 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: "white",
     marginVertical: 10, // Changed from margin to marginVertical
+  },
+  heading: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 5,
   },
   cityText: {
     fontSize: 28,

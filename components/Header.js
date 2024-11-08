@@ -20,7 +20,7 @@ const Header = ({ toggleDrawer }) => {
           "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"), // Ensure path is correct
         });
 
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -58,7 +58,7 @@ const Header = ({ toggleDrawer }) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    width: screenWidth * 0.9,
+    width: screenWidth * 0.92,
     height: 73,
     borderColor: "black",
     borderWidth: 1,
