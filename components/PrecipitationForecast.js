@@ -3,8 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 
 const PrecipitationForecast = ({ props }) => {
-    console.log(props);
-    let {forecast} = props;
+  let { forecast } = props;
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Precipitation Forecast</Text>

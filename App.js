@@ -13,6 +13,12 @@ import DailyForecast from "./components/DailyForecast";
 import WeatherAlerts from "./components/WeatherAlerts";
 import AirQualityIndex from "./components/AirQualityIndex"; // Import the new component
 import PrecipitationForecast from "./components/PrecipitationForecast";
+import UvIndex from "./components/UvIndex";
+import WindForecast from "./components/WindForecast";
+import PollenCount from "./components/PollenCount";
+import Astronomy from "./components/Astronomy";
+import WeatherMap from "./components/WeatherMap"; 
+import { useState } from "react";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -21,6 +27,86 @@ const WeatherSection = ({ component: Component, ...props }) => (
 );
 
 export default function App() {
+   const [currentLocation, setCurrentLocation] = useState("San Francisco, CA");
+
+   const handleLocationChange = (newLocation) => {
+     setCurrentLocation(newLocation);
+     // Here you would typically fetch new weather data for the new location
+     // For now, we'll just update the MainWeatherDisplay
+     const updatedSections = sections.map((section) => {
+       if (section.key === "main") {
+         return {
+           ...section,
+           props: {
+             ...section.props,
+             city: newLocation,
+             state: "", // You might want to parse the state from the newLocation string
+           },
+         };
+       }
+       return section;
+     });
+     setSections(updatedSections);
+   };
+
+  // Sample Weather Map data
+  const sampleWeatherMapData = {
+    region: {
+      latitude: 29.8543,
+      longitude: 77.888,
+    },
+    weatherData: [
+      { latitude: 29.8543, longitude: 77.888, weight: 1 },
+      { latitude: 29.855, longitude: 77.889, weight: 0.8 },
+      { latitude: 29.854, longitude: 77.887, weight: 0.6 },
+      { latitude: 29.856, longitude: 77.886, weight: 0.7 },
+      { latitude: 29.853, longitude: 77.89, weight: 0.5 },
+    ],
+  };
+
+  // Sample Astronomy data
+  const sampleAstronomy = {
+    moonPhase: "Waxing Crescent",
+    moonrise: "3:45 PM",
+    moonset: "2:30 AM",
+    starVisibility: "Good",
+  };
+
+  // Sample Pollen Count data
+  const samplePollenCount = {
+    overall: 5.6,
+    types: [
+      { name: "Tree", count: 3.2 },
+      { name: "Grass", count: 6.8 },
+      { name: "Weed", count: 4.5 },
+      { name: "Mold", count: 2.1 },
+    ],
+  };
+
+  // Sample Wind Forecast data
+  const sampleWindForecast = {
+    currentWind: { speed: 10, direction: 225 },
+    forecast: [
+      { time: "12 PM", speed: 12, direction: 240 },
+      { time: "1 PM", speed: 11, direction: 235 },
+      { time: "2 PM", speed: 13, direction: 230 },
+      { time: "3 PM", speed: 12, direction: 225 },
+      { time: "4 PM", speed: 10, direction: 220 },
+    ],
+  };
+
+  // Sample UV index data
+  const sampleUvIndex = {
+    currentUv: 6,
+    forecast: [
+      { time: "12 PM", uv: 5 },
+      { time: "1 PM", uv: 6 },
+      { time: "2 PM", uv: 7 },
+      { time: "3 PM", uv: 6 },
+      { time: "4 PM", uv: 5 },
+    ],
+  };
+
   // Sample precipitation forecast data
   const samplePrecipitationForecast = [
     { time: "3 PM", type: "rain", amount: "0.1 in" },
@@ -80,6 +166,31 @@ export default function App() {
       props: { forecast: samplePrecipitationForecast },
     },
     {
+      key: "uvIndex",
+      component: UvIndex,
+      props: sampleUvIndex,
+    },
+    {
+      key: "windForecast",
+      component: WindForecast,
+      props: sampleWindForecast,
+    },
+    {
+      key: "pollenCount",
+      component: PollenCount,
+      props: samplePollenCount,
+    },
+    {
+      key: "astronomy",
+      component: Astronomy,
+      props: sampleAstronomy,
+    },
+    {
+      key: "weatherMap",
+      component: WeatherMap,
+      props: sampleWeatherMapData,
+    },
+    {
       key: "alerts",
       component: WeatherAlerts,
       props: { alerts: sampleAlerts },
@@ -91,7 +202,7 @@ export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <Header />
+        <Header onLocationChange={handleLocationChange} />
         <View style={styles.contentContainer}>
           <FlatList
             data={sections}

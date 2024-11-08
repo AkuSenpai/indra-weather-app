@@ -1,25 +1,30 @@
-// components/Header.js
-import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Dimensions, StyleSheet } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome6";
+import React, { useState, useCallback, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import Icon5 from "react-native-vector-icons/FontAwesome5";
+import Icon6 from "react-native-vector-icons/FontAwesome6";
 
-// Prevent the splash screen from auto-hiding until we're ready
-SplashScreen.preventAutoHideAsync();
 const { width: screenWidth } = Dimensions.get("window");
 
-const Header = ({ toggleDrawer }) => {
+const Header = ({ onLocationChange,toggleDrawer  }) => {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function prepare() {
       try {
-        // Load fonts and other assets
         await Font.loadAsync({
-          "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"), // Ensure path is correct
+          "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"),
         });
-
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (e) {
         console.warn(e);
@@ -27,7 +32,6 @@ const Header = ({ toggleDrawer }) => {
         setAppIsReady(true);
       }
     }
-
     prepare();
   }, []);
 
@@ -37,21 +41,47 @@ const Header = ({ toggleDrawer }) => {
     }
   }, [appIsReady]);
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      onLocationChange(searchQuery);
+      setIsSearching(false);
+      setSearchQuery("");
+    }
+  };
+
   if (!appIsReady) {
     return null;
   }
 
   return (
     <View style={styles.headerContainer} onLayout={onLayoutRootView}>
-      <TouchableOpacity onPress={toggleDrawer}>
-        <Icon name="bars" size={30} color="#000" />
-      </TouchableOpacity>
-
-      <Text style={styles.headerTitle}>WEATHRY</Text>
-
-      <TouchableOpacity onPress={toggleDrawer}>
-        <Icon name="circle-user" size={30} color="#000" />
-      </TouchableOpacity>
+      {isSearching ? (
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Enter location..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={handleSearch}
+          />
+          <TouchableOpacity onPress={() => setIsSearching(false)}>
+            <Icon5 name="times" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <TouchableOpacity>
+            <Icon5 name="bars" size={30} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>WEATHRY</Text>
+          <TouchableOpacity onPress={() => setIsSearching(true)}>
+            <Icon5 name="search" size={24} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleDrawer}>
+            <Icon6 name="circle-user" size={30} color="#000" />
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 };
@@ -72,6 +102,20 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Medium",
     fontSize: 24,
     fontWeight: "bold",
+  },
+  searchContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginRight: 10,
   },
 });
 
